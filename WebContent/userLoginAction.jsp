@@ -7,43 +7,40 @@
 <%
 	request.setCharacterEncoding("UTF-8");
 	String userID = null;
-	if(session.getAttribute("userID") != null) {
-		userID = (String) session.getAttribute("userID");
-	}
-	if(userID != null) {
-		out.println("<script>");
-		out.println("alert('로그인이 된 상태입니다.');");
-		out.println("location.href = 'userLogin.jsp';");
-		out.println("</script>");
-	}
 	String userPassword = null;
-	String userEmail = null;
 	if(request.getParameter("userID") != null) {
 		userID = request.getParameter("userID");
 	}
 	if(request.getParameter("userPassword") != null) {
 		userPassword = request.getParameter("userPassword");
 	}
-	if(request.getParameter("userEmail") != null) {
-		userEmail = request.getParameter("userEmail");
-	}
-	if(userID == null || userPassword == null || userEmail == null) {
+	if(userID == null || userPassword == null) {
 		out.println("<script>");
 		out.println("alert('입력이 안된 사항이 있습니다.');");
 		out.println("history.back();");
 		out.println("</script>");
 	}
 	UserDAO userDAO = new UserDAO();
-	int result = userDAO.join(new UserDTO(userID, userPassword, userEmail, SHA256.getSHA256(userEmail), false));
-	if (result == -1) {
-		out.println("<script>");
-		out.println("alert('이미 존재하는 아이디입니다.');");
-		out.println("history.back();");
-		out.println("</script>");
-	} else {
+	int result = userDAO.login(userID, userPassword);
+	if (result == 1) {
 		session.setAttribute("userID", userID);
 		out.println("<script>");
-		out.println("location.href = 'emailSendAction.jsp';");
+		out.println("location.href = 'index.jsp';");
+		out.println("</script>");
+	} else if(result == 0) {
+		out.println("<script>");
+		out.println("alert('비밀번호가 틀립니다.');");
+		out.println("history.back();");
+		out.println("</script>");
+	} else if(result == -1) {
+		out.println("<script>");
+		out.println("alert('존재하지 않는 아이디입니다.');");
+		out.println("history.back();");
+		out.println("</script>");
+	} else if(result == -2) {
+		out.println("<script>");
+		out.println("alert('데이터베이스 오류가 발생했습니다.');");
+		out.println("history.back();");
 		out.println("</script>");
 	}
 

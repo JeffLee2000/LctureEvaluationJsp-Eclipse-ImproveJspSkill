@@ -17,6 +17,18 @@
 	<link rel="stylesheet" href="./css/custom.css">
 </head>
 <body>
+<%
+	String userID = null;
+	if(session.getAttribute("userID") != null) {
+		userID = (String) session.getAttribute("userID");
+	}
+	if(userID != null) {
+		out.println("<script>");
+		out.println("alert('로그인이 된 상태입니다.');");
+		out.println("location.href = 'userLogin.jsp';");
+		out.println("</script>");
+	}
+%>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<a class="navbar-brand" href="index.jsp">강의평가 웹 사이트</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
@@ -24,7 +36,7 @@
 		</button>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item">
+				<li class="nav-item active">
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
 				<li class="nav-item dropdown">
@@ -32,9 +44,18 @@
 						회원 관리
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
+<%
+	if(userID == null) {
+%>
 						<a class="dropdown-item" href="userLogin.jsp">로그인</a>
-						<a class="dropdown-item active" href="userJoin.jsp">회원가입</a>
-						<a class="dropdown-item" href="userLogout.jsp">로그아웃</a>	
+						<a class="dropdown-item" href="userJoin.jsp">회원가입</a>
+<%
+	} else {
+%>
+						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>	
+<%
+	}
+%>
 					</div>
 				</li>
 			</ul>
